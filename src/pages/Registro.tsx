@@ -22,7 +22,7 @@ const Registro = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-sky-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6 text-sky-900">Bienvenido a Navegarium</h1>
+        <h1 className="mt-2 text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-6xl">Bienvenido a Navegarium</h1>
         
         <label className="block mb-2 font-semibold">Nombre completo</label>
         <input type="text" className="w-full mb-4 p-2 border rounded" value={nombre} onChange={e => setNombre(e.target.value)} />

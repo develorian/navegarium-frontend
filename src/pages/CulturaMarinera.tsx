@@ -1,7 +1,7 @@
 const CulturaMarinera = () => {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-blue-700">Conocimientos Marineros</h1>
+      <h1 className="mt-2 text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-6xl">Conocimientos Marineros</h1>
     </div>
   );
 };
