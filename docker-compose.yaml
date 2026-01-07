@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  # Servicio para desarrollo: monta el código en el contenedor, instala dependencias y arranca en modo dev
+  frontend:
+    image: node:18-alpine
+    container_name: navegarium-frontend-dev
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install --no-audit --no-fund && npm run dev || npm start"
+    networks:
+      - navegarium-net
+    # usar profile "dev" para levantar sólo servicios dev (opcional)
+    profiles:
+      - dev
+
+  # Servicio para construir los archivos estáticos de producción (escribe en ./build)
+  builder:
+    image: node:18-alpine
+    container_name: navegarium-builder
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      - NODE_ENV=production
+    command: sh -c "npm ci --prefer-offline --no-audit --no-fund && npm run build"
+    networks:
+      - navegarium-net
+    profiles:
+      - prod
+
+  # Nginx sirve la carpeta ./build generada por builder
+  nginx:
+    image: nginx:stable-alpine
+    container_name: navegarium-nginx
+    depends_on:
+      - builder
+    ports:
+      - "80:80"
+    volumes:
+      # Asegúrate de tener ./build (generado por `npm run build`) y opcionalmente ./nginx/default.conf
+      - ./build:/usr/share/nginx/html:ro
+      # Si quieres configuración custom, crea ./nginx/default.conf y se montará aquí:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - navegarium-net
+    profiles:
+      - prod
+
+networks:
+  navegarium-net:
+    driver: bridge
